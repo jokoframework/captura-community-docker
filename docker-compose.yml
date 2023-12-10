@@ -1,0 +1,57 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:11.22-alpine3.18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-captura}
+      PGDATA: /data/postgres
+    volumes:
+       - ./postgres-data:/data/postgres
+    ports:
+      - "25432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-captura@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-captura}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  mongo:
+    container_name: mongo_container
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 1g
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=captura
+      - MONGO_INITDB_ROOT_PASSWORD=captura123
+      - MONGO_INITDB_DATABASE=mobileforms
+    image: mongo:4.4.26
+    volumes:
+      - ./mongo-data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+    pgadmin:
+
