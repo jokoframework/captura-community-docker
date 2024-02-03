@@ -3,13 +3,19 @@ version: '3.5'
 services:
   postgres:
     container_name: postgres_container
-    image: postgres:11.22-alpine3.18
+    image: postgres:16.1-alpine3.19
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-captura}
       PGDATA: /data/postgres
     volumes:
        - ./postgres-data:/data/postgres
+       - ./db:/docker-entrypoint-initdb.d/
     ports:
       - "25432:5432"
     networks:
@@ -43,7 +49,13 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=captura
       - MONGO_INITDB_ROOT_PASSWORD=captura123
       - MONGO_INITDB_DATABASE=mobileforms
-    image: mongo:4.4.26
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin123
+      - MONGODB_APPLICATION_DATABASE=mobileforms
+      - MONGODB_APPLICATION_USER=captura
+      - MONGODB_APPLICATION_PASS=captura123
+    image: mongo:5.0.24
     volumes:
       - ./mongo-data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
