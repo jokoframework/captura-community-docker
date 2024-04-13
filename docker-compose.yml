@@ -2,8 +2,8 @@ version: '3.5'
 
 services:
   postgres:
-    container_name: postgres_container
-    image: postgres:11.22-alpine3.18
+    container_name: postgres_container_2024
+    image: postgres:16.2
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-captura}
@@ -17,8 +17,8 @@ services:
     restart: unless-stopped
   
   pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4
+    container_name: pgadmin_container_2024
+    image: dpage/pgadmin4:8.4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-captura@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-captura}
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 
   mongo:
-    container_name: mongo_container
+    container_name: mongo_container_2024
     ports:
       - "${MONGODB_PORT:-27017}:27017"
     restart: unless-stopped
@@ -43,7 +43,13 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=captura
       - MONGO_INITDB_ROOT_PASSWORD=captura123
       - MONGO_INITDB_DATABASE=mobileforms
-    image: mongo:4.4.26
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin123
+      - MONGODB_APPLICATION_DATABASE=mobileforms
+      - MONGODB_APPLICATION_USER=captura
+      - MONGODB_APPLICATION_PASS=captura123
+    image: mongo:7.0.6
     volumes:
       - ./mongo-data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
