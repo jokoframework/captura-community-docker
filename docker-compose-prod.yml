@@ -59,15 +59,6 @@ services:
     volumes:
       - ./mongo-data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-  
-
-  mailhog:
-    container_name: mailhog_container_2024
-    ports:
-      - 1025:1025
-      - 8025:8025
-    restart: unless-stopped
-    image: mailhog/mailhog
 
 networks:
   postgres:
