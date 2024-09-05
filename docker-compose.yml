@@ -4,12 +4,18 @@ services:
   postgres:
     container_name: postgres_container_2024
     image: postgres:16.2
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-captura}
       PGDATA: /data/postgres
     volumes:
        - ./postgres-data:/data/postgres
+       - ./db:/docker-entrypoint-initdb.d/
     ports:
       - "25432:5432"
     networks:
