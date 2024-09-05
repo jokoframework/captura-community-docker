@@ -21,6 +21,8 @@ SET row_security = off;
 --
 
 CREATE DATABASE mobileforms_database WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
+CREATE DATABASE cipe WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
+
 
 
 ALTER DATABASE mobileforms_database OWNER TO postgres;
